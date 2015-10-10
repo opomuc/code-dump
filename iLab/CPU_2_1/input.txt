@@ -1,0 +1,8 @@
+push_ax
+push_ax
+mul
+push 5
+sub
+push 10
+mul
+end

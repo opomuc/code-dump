@@ -1,0 +1,28 @@
+push 9
+push 3
+push 899
+add
+push_ax
+dump
+mul
+push_ax
+push_ax
+add
+dump
+dump
+dump
+push_ax
+push_ax
+add
+sub
+push_ax
+push_ax
+push_ax
+dump
+div
+add
+push 90
+push 23
+pop
+pop
+end

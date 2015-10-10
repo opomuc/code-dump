@@ -1,0 +1,20 @@
+push 200
+dump
+push_ax
+push 39
+push 84
+pop
+add
+dis
+dump
+jump
+div
+push 19
+push 20
+sub
+dump
+push_ax
+push_ax
+mul
+pop
+end
