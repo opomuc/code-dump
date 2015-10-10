@@ -1,15 +1,15 @@
-#include <stdio.h>
+п»ї#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <math.h>
 
-const int DATA_SIZE = 10;  //констанста времени компиляции
+const int DATA_SIZE = 10;  //РєРѕРЅСЃС‚Р°РЅСЃС‚Р° РІСЂРµРјРµРЅРё РєРѕРјРїРёР»СЏС†РёРё
 
 
 int main()
 {
 
-    int data[DATA_SIZE] = {};  //инициализация убрана по причине.....
+    int data[DATA_SIZE] = {};  //РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ СѓР±СЂР°РЅР° РїРѕ РїСЂРёС‡РёРЅРµ.....
 
     for (int i = 0; i < DATA_SIZE; i++)
     {
@@ -20,16 +20,16 @@ int main()
     }
 
     int n = rand();
-    int*  area = (int*)  calloc (n, sizeof (*area));  //(n, sizeof (int));   т.к. area уже объявлена, ее можно использовать в качестве указателя
+    int*  area = (int*)  calloc (n, sizeof (*area));  //(n, sizeof (int));   С‚.Рє. area СѓР¶Рµ РѕР±СЉСЏРІР»РµРЅР°, РµРµ РјРѕР¶РЅРѕ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РІ РєР°С‡РµСЃС‚РІРµ СѓРєР°Р·Р°С‚РµР»СЏ
     char* str  = (char*) calloc (n, sizeof ( *str));  //(n, sizeof (char));
 
     area[0] = 20;
 
     free (area);
-    area = NULL; // Обнуление указателя,      free (NULL) - не производит ничего
+    area = NULL; // РћР±РЅСѓР»РµРЅРёРµ СѓРєР°Р·Р°С‚РµР»СЏ,      free (NULL) - РЅРµ РїСЂРѕРёР·РІРѕРґРёС‚ РЅРёС‡РµРіРѕ
 
     free (str);
-    //free (area);  повторное free - ошибка
+    //free (area);  РїРѕРІС‚РѕСЂРЅРѕРµ free - РѕС€РёР±РєР°
 
 
 }
