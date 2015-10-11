@@ -36,7 +36,7 @@ int main(int argc, char** argv)
         cout << "## ERROR: Incorrect input filename" << endl;
         exit(-1);
       }
-      if (argv[2] != "-p") 
+      if (argv[2] != "-p")  // this is totally uncorrect!!! let it be for now. looking for a reason why "-p" != "-p"
       {
         param = strtod(argv[3], NULL);
       }
