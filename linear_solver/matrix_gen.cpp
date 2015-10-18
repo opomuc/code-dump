@@ -144,8 +144,5 @@ int main(int argc, char** argv)
   cout << "The method has taken: " << elapsed_secs << " seconds" << endl;
   cout << "There was " << N + 1 << " iterations" << endl; 
 
-  //cout << A_Matrix * Result_vector << endl << endl;
-  //cout << Value_vector << endl;
-
   return 0;
 }
