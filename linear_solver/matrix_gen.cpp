@@ -27,11 +27,8 @@ int main(int argc, char** argv)
   {
     if (strcmp(argv[1], "-p"))
     {
-      try
-      {
-        input.open(argv[1]);
-      }
-      catch(...)
+      input.open(argv[1]);
+      if (!input.is_open())
       {
         cout << "## ERROR: Incorrect input filename" << endl;
         exit(-1);
@@ -39,6 +36,11 @@ int main(int argc, char** argv)
       if (!strcmp(argv[2], "-p")) 
       {
         param = strtod(argv[3], NULL);
+      }
+      else
+      {
+        cout << "Unknown argument: " << argv[2] << endl;
+        exit(-1);
       }
     }
     else
