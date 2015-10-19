@@ -105,7 +105,7 @@ int main(int argc, char** argv)
 
   // we need symmetrical matrix, so we make it that way
   Value_vector = A_Matrix.transpose() * Value_vector;
-  A_Matrix = A_Matrix * A_Matrix.transpose();
+  A_Matrix = A_Matrix.transpose() * A_Matrix;
   // calculating matrices derived from A
   U_Matrix = A_Matrix.triangularView<StrictlyUpper>();
   L_Matrix = A_Matrix.triangularView<StrictlyLower>();
