@@ -25,20 +25,22 @@ int main(int argc, char** argv)
   }
   if (argc > 1)
   {
-    if (argv[1] != "-p")
+    if (strcmp(argv[1], "-p"))
     {
-      try
-      {
-        input.open(argv[1]);
-      }
-      catch(...)
+      input.open(argv[1]);
+      if (!input.is_open())
       {
         cout << "## ERROR: Incorrect input filename" << endl;
         exit(-1);
       }
-      if (argv[2] != "-p")  // this is totally uncorrect!!! let it be for now. looking for a reason why "-p" != "-p"
+      if (!strcmp(argv[2], "-p")) 
       {
         param = strtod(argv[3], NULL);
+      }
+      else
+      {
+        cout << "Unknown argument: " << argv[2] << endl;
+        exit(-1);
       }
     }
     else
@@ -65,11 +67,11 @@ int main(int argc, char** argv)
   MatrixXd D_Matrix(matrix_size, matrix_size);
   MatrixXd M_Matrix(matrix_size, matrix_size);
   MatrixXd F_Matrix(matrix_size, matrix_size);
-  MatrixXd G_Matrix(matrix_size, matrix_size);
+  //MatrixXd G_Matrix(matrix_size, matrix_size);
   VectorXd Value_vector(matrix_size);
   VectorXd Init_vector(matrix_size);
   VectorXd Result_vector(matrix_size);
-  VectorXd g_vector(matrix_size);
+  //VectorXd g_vector(matrix_size);
   // set zero approximation to zero vector
   Init_vector.setZero();
 
@@ -102,19 +104,20 @@ int main(int argc, char** argv)
   }
 
   // we need symmetrical matrix, so we make it that way
-  A_Matrix = A_Matrix * A_Matrix.transpose();
   Value_vector = A_Matrix.transpose() * Value_vector;
+  A_Matrix = A_Matrix.transpose() * A_Matrix;
   // calculating matrices derived from A
   U_Matrix = A_Matrix.triangularView<StrictlyUpper>();
   L_Matrix = A_Matrix.triangularView<StrictlyLower>();
   D_Matrix = A_Matrix.diagonal().asDiagonal();
   M_Matrix = L_Matrix + (D_Matrix / (1 + param));
-  F_Matrix = U_Matrix + param / (1 + param) * D_Matrix;
+  F_Matrix = U_Matrix + (param / (1 + param)) * D_Matrix;
   M_Matrix = M_Matrix.inverse();
-  G_Matrix = - M_Matrix * F_Matrix;
-  g_vector = M_Matrix * Value_vector;
+  //G_Matrix = - M_Matrix * F_Matrix;
+  //g_vector = M_Matrix * Value_vector;
 
-  /*// estimating number of iterations
+  /*
+  // estimating number of iterations
   SelfAdjointEigenSolver<MatrixXd> es(G_Matrix);
   double q = es.eigenvalues().maxCoeff();
   cout << q << endl;
@@ -122,24 +125,26 @@ int main(int argc, char** argv)
   estimate = ceil(log((epsilon * (1-q))/g_vector.norm()) / log(q));
   cout << "Estimated number of iterations: " << estimate << endl;
   */
+
   // calculating result using iterative method
   cout << "Parameter: p = " << param << endl; 
   cout << "Calculating..." << endl;
-  int N = 0;
+  long long int N = 0;
   for (N = 0; ; N++)
   {
     Result_vector = M_Matrix * (Value_vector - F_Matrix * Init_vector);
-    if ((Result_vector - Init_vector).norm() <= epsilon) break;
+    if ((A_Matrix * Result_vector - Value_vector).norm() <= epsilon) break;
     Init_vector = Result_vector;
   }
   // saving the solution
   output << Result_vector;
-  
+
   output.close();
   input.close();
   clock_t end = clock();
   double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
   cout << "The method has taken: " << elapsed_secs << " seconds" << endl;
   cout << "There was " << N + 1 << " iterations" << endl; 
+
   return 0;
 }
