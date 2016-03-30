@@ -12,23 +12,14 @@ typedef struct {
 } spline_tuple;
 
 typedef struct {
-	// Структура, описывающая сплайн на каждом сегменте сетки	
-	spline_tuple* splines; // Сплайн
-	int n; // Количество узлов сетки
-
+	spline_tuple* splines;
+	int n;
 } Spline;
 
-void free_mem(Spline* this); // Освобождение памяти
-void construct_cubic_spline(Spline* This); //конструктор
-void destruct_cubic_spline(Spline* this); //деструктор
-
-	// Построение сплайна
-	// x - узлы сетки, должны быть упорядочены по возрастанию, кратные узлы запрещены
-	// y - значения функции в узлах сетки
-	// n - количество узлов сетки
+void free_mem(Spline* this);
+void construct_cubic_spline(Spline* this);
+void destruct_cubic_spline(Spline* this);
 void build_spline(Spline* this, const double *x, const double *y, int n);
-
-	// Вычисление значения интерполированной функции в произвольной точке
 double get_spline(Spline* this, double x);
 
 void construct_cubic_spline(Spline* this) {
@@ -52,7 +43,6 @@ void build_spline(Spline* this, const double *x, const double *y, int n)
 
 	this->n = n;
 
-	// Инициализация массива сплайнов
 	this->splines = calloc(n, sizeof(spline_tuple));
 	for (int i = 0; i < n; ++i)
 	{
@@ -61,8 +51,6 @@ void build_spline(Spline* this, const double *x, const double *y, int n)
 	}
 	this->splines[0].c = 0.;
 
-	// Решение СЛАУ относительно коэффициентов сплайнов c[i] методом прогонки для трехдиагональных матриц
-	// Вычисление прогоночных коэффициентов - прямой ход метода прогонки
 	double *alpha = calloc(n - 1, sizeof(double));
 	double *beta = calloc(n - 1, sizeof(double));
 	double A, B, C, F, h_i, h_i1, z;
@@ -81,15 +69,12 @@ void build_spline(Spline* this, const double *x, const double *y, int n)
 
 	this->splines[n - 2].c = (F - A * beta[n - 2]) / (C + A * alpha[n - 2]);
 
-	// Нахождение решения - обратный ход метода прогонки
 	for (int i = n - 2; i > 0; --i)
 		this->splines[i].c = alpha[i] * this->splines[i + 1].c + beta[i];
 
-	// Освобождение памяти, занимаемой прогоночными коэффициентами
 	free(beta);
 	free(alpha);
 
-	// По известным коэффициентам c[i] находим значения b[i] и d[i]
 	for (int i = n - 1; i > 0; --i)
 	{
 		double h_i = x[i] - x[i - 1];
@@ -100,14 +85,14 @@ void build_spline(Spline* this, const double *x, const double *y, int n)
 
 double get_spline(Spline* this, double x) {
 	if (!this->splines)
-		return 0; // Если сплайны ещё не построены - возвращаем NaN
+		return 0;
 
 	spline_tuple *s;
-	if (x <= this->splines[0].x) // Если x меньше точки сетки x[0] - пользуемся первым эл-том массива
+	if (x <= this->splines[0].x)
 		s = this->splines + 1;
-	else if (x >= this->splines[this->n - 1].x) // Если x больше точки сетки x[n - 1] - пользуемся последним эл-том массива
+	else if (x >= this->splines[this->n - 1].x)
 		s = this->splines + this->n - 1;
-	else // Иначе x лежит между граничными точками сетки - производим бинарный поиск нужного эл-та массива
+	else
 	{
 		int i = 0, j = this->n - 1;
 		while (i + 1 < j)
@@ -122,7 +107,7 @@ double get_spline(Spline* this, double x) {
 	}
 
 	double dx = (x - s->x);
-	return s->a + (s->b + (s->c / 2. + s->d * dx / 6.) * dx) * dx; // Вычисляем значение сплайна в заданной точке.
+	return s->a + (s->b + (s->c / 2. + s->d * dx / 6.) * dx) * dx;
 }
 
 int main() {
@@ -139,7 +124,7 @@ int main() {
   for(int i = 0; i < POINT_NUM; i++) {
     x[i] = i;
     y[i] = rand();
-    fprintf(out, "%f %f\n", x[i], y[i]);
+    fprintf(out, "%f\n%f\n", x[i], y[i]);
   }
   
   build_spline(&my_spline, x, y, POINT_NUM);
